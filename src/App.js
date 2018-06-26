@@ -26,21 +26,37 @@ class App extends Component {
     this.resetData = this.resetData.bind(this);
     this.byYear = this.byYear.bind(this);
     this.deleteBuyer = this.deleteBuyer.bind(this);
+
+    this.baseURL = 'http://joes-autos.herokuapp.com/api'
   }
 
   getVehicles() {
     // axios (GET)
     // setState with response -> vehiclesToDisplay
+    axios.get(this.baseURL + '/vehicles').then(response => {
+      console.log(11111, response)
+      this.setState({vehiclesToDisplay: response.data})
+      toast.success('yay!')
+    }).catch(err => {
+      toast.error('oops! Something went wrong when fetching')
+    })
+    
   }
 
   getPotentialBuyers() {
     // axios (GET)
     // setState with response -> buyersToDisplay
+    axios.get(this.baseURL + '/buyers/').then(response => {
+      this.setState({buyersToDisplay: response.data})
+    })
   }
 
   sellCar(id) {
     // axios (DELETE)
     // setState with response -> vehiclesToDisplay
+    axios.delete(`${this.baseURL}/vehicles/${id}`).then(response => {
+      this.setState({vehiclesToDisplay: response.data.vehicles})
+    }).catch(err => toast.error('error selling car'))
   }
 
   filterByMake() {
@@ -48,6 +64,9 @@ class App extends Component {
 
     // axios (GET)
     // setState with response -> vehiclesToDisplay
+    axios.get(`${this.baseURL}/vehicles?make=${make}`).then(response => {
+      this.setState({vehiclesToDisplay: response.data})
+    })
   }
 
   filterByColor() {
@@ -55,11 +74,19 @@ class App extends Component {
 
     // axios (GET)
     // setState with response -> vehiclesToDisplay
+    axios.get(`${this.baseURL}/vehicles?color=${color}`).then(response => {
+      this.setState({vehiclesToDisplay: response.data})
+    })
   }
 
   updatePrice(priceChange, id) {
     // axios (PUT)
-    // setState with response -> vehiclesToDisplay
+    // setState with response -> vehiclesToDisplay  
+    axios.put(`${this.baseURL}/vehicles/${id}/${priceChange}`).then(response => {
+      this.setState({vehiclesToDisplay: response.data.vehicles})
+    }).catch(err => {
+      toast.err('could not update price')
+    })
   }
 
   addCar() {
@@ -73,6 +100,13 @@ class App extends Component {
 
     // axios (POST)
     // setState with response -> vehiclesToDisplay
+
+
+    axios.post(`${this.baseURL}/vehicles`, newCar).then(response => {
+      this.setState({vehiclesToDisplay: response.data.vehicles})
+    }).catch(err => {
+      toast.error('error adding new car')
+    })
   }
 
   addBuyer() {
@@ -84,18 +118,30 @@ class App extends Component {
 
     //axios (POST)
     // setState with response -> buyersToDisplay
+    axios.post(`${this.baseURL}/buyers`, newBuyer).then(response => {
+      console.log(1111, response)
+      this.setState({buyersToDisplay: response.data.buyers})
+    })
   }
 
   deleteBuyer(id) {
     // axios (DELETE)
     //setState with response -> buyersToDisplay
+    axios.delete(`${this.baseURL}/buyers/${id}`).then(response => {
+      this.setState({buyersToDisplay: response.data.buyers})
+    })
   }
 
+
+  //look at this
   nameSearch() {
     let searchLetters = this.searchLetters.value;
 
     // axios (GET)
     // setState with response -> buyersToDisplay
+    axios.get(`${this.baseURL}/buyers`).then(response => {
+      this.setState({buyersToDisplay: response.data})
+    })
   }
 
   byYear() {
